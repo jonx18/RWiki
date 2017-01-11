@@ -1,0 +1,475 @@
+ #Calculando cuantos K clusters usar
+> #Usando el criterio de indice de Calinski-Harabasz.
+> #(Promedio entre la varianza de clusters entre si y y el total de la varianza interna de los clusters.) )
+> system.time(clustering.ch <- kmeansruns(pmatrix, krange=1:20, criterion="ch",algorithm="MacQueen"))
+   user  system elapsed 
+ 298.98    0.86  303.02 
+> clustering.ch$bestk #K recomendado por CH
+[1] 5
+> #Usando el criterio de "Average silhouette width"
+> system.time(clustering.asw <- kmeansruns(pmatrix, krange=1:20, criterion="asw",algorithm="MacQueen"))#Criterio asw(average silhouette width)
+   user  system elapsed 
+1230.77  114.34 1360.22 
+> clustering.asw$bestk #K recomendado por ASW
+[1] 3
+> #Grafico para observar posibles K
+> critframe <- data.frame(k=1:20, ch=scale(clustering.ch$crit),
++                         asw=scale(clustering.asw$crit))
+> critframe <- melt(critframe, id.vars=c("k"),
++                   variable.name="measure",
++                   value.name="score")
+> 
+> ggplot(critframe, aes(x=k, y=score, color=measure)) +
++   geom_point(aes(shape=measure)) + geom_line(aes(linetype=measure)) +
++   scale_x_continuous(breaks=1:20, labels=1:20)
+> kbest.p<-3#mas estables 12
+> cboot<-clusterboot(pmatrix, clustermethod=kmeansCBI,
++                    runs=100,iter.max=100,count = TRUE, 
++                    krange=kbest.p, seed=7777777,algorithm="MacQueen")
+boot 1 
+boot 2 
+boot 3 
+boot 4 
+boot 5 
+boot 6 
+boot 7 
+boot 8 
+boot 9 
+boot 10 
+boot 11 
+boot 12 
+boot 13 
+boot 14 
+boot 15 
+boot 16 
+boot 17 
+boot 18 
+boot 19 
+boot 20 
+boot 21 
+boot 22 
+boot 23 
+boot 24 
+boot 25 
+boot 26 
+boot 27 
+boot 28 
+boot 29 
+boot 30 
+boot 31 
+boot 32 
+boot 33 
+boot 34 
+boot 35 
+boot 36 
+boot 37 
+boot 38 
+boot 39 
+boot 40 
+boot 41 
+boot 42 
+boot 43 
+boot 44 
+boot 45 
+boot 46 
+boot 47 
+boot 48 
+boot 49 
+boot 50 
+boot 51 
+boot 52 
+boot 53 
+boot 54 
+boot 55 
+boot 56 
+boot 57 
+boot 58 
+boot 59 
+boot 60 
+boot 61 
+boot 62 
+boot 63 
+boot 64 
+boot 65 
+boot 66 
+boot 67 
+boot 68 
+boot 69 
+boot 70 
+boot 71 
+boot 72 
+boot 73 
+boot 74 
+boot 75 
+boot 76 
+boot 77 
+boot 78 
+boot 79 
+boot 80 
+boot 81 
+boot 82 
+boot 83 
+boot 84 
+boot 85 
+boot 86 
+boot 87 
+boot 88 
+boot 89 
+boot 90 
+boot 91 
+boot 92 
+boot 93 
+boot 94 
+boot 95 
+boot 96 
+boot 97 
+boot 98 
+boot 99 
+boot 100 
+> groups <- cboot$result$partition
+> #print_clusters(cboot$result$partition, kbest.p) Por si quiero ver el contenido
+> summary_clusters(cboot$result$partition, kbest.p)
+[1] "cluster 1"
+      none              sup             infobox             italic           heading3         heading4            sub          blockquote        heading2      
+ Min.   :-70.000   Min.   :-20.000   Min.   :-18.0000   Min.   :-159.00   Min.   :-483.0   Min.   :-26.000   Min.   :-47.0   Min.   :-208.0   Min.   :-637.00  
+ 1st Qu.:  0.000   1st Qu.:  0.000   1st Qu.: -0.5000   1st Qu.: -56.50   1st Qu.:  -9.5   1st Qu.: -2.000   1st Qu.:  0.0   1st Qu.:   0.0   1st Qu.: -12.50  
+ Median :  0.000   Median :  0.000   Median :  0.0000   Median : -29.00   Median :  -5.0   Median :  0.000   Median :  0.0   Median :   0.0   Median :  -9.00  
+ Mean   : -2.371   Mean   : -1.829   Mean   : -0.9429   Mean   : -37.66   Mean   : -21.8   Mean   : -1.829   Mean   : -1.4   Mean   : -17.4   Mean   : -39.14  
+ 3rd Qu.:  0.000   3rd Qu.:  0.000   3rd Qu.:  0.0000   3rd Qu.:   0.00   3rd Qu.:  -2.5   3rd Qu.:  0.000   3rd Qu.:  0.0   3rd Qu.:   0.0   3rd Qu.:  -6.50  
+ Max.   :  0.000   Max.   :  0.000   Max.   :  0.0000   Max.   :   1.00   Max.   :   0.0   Max.   :  1.000   Max.   :  0.0   Max.   :   0.0   Max.   :   0.00  
+   reference      numberedelement     wikitable            file           redirection           nowiki              blod            internal            s          
+ Min.   :-59.00   Min.   :-236.00   Min.   :-8.0000   Min.   :-173.000   Min.   :-16.0000   Min.   :-106.000   Min.   :-54.000   Min.   :-749.0   Min.   :-72.000  
+ 1st Qu.:-22.50   1st Qu.:  -6.00   1st Qu.: 0.0000   1st Qu.:   0.000   1st Qu.:  0.0000   1st Qu.:   0.000   1st Qu.: -5.000   1st Qu.:-366.0   1st Qu.:  0.000  
+ Median : -2.00   Median :  -1.00   Median : 0.0000   Median :   0.000   Median :  0.0000   Median :   0.000   Median : -2.000   Median :-241.0   Median :  0.000  
+ Mean   :-12.43   Mean   : -10.74   Mean   :-0.3714   Mean   :  -5.114   Mean   : -0.5143   Mean   :  -3.914   Mean   : -6.743   Mean   :-238.9   Mean   : -2.886  
+ 3rd Qu.:  0.00   3rd Qu.:   0.00   3rd Qu.: 0.0000   3rd Qu.:   0.000   3rd Qu.:  0.0000   3rd Qu.:   0.000   3rd Qu.:  0.000   3rd Qu.:   0.0   3rd Qu.:  0.000  
+ Max.   :  2.00   Max.   :   0.00   Max.   : 0.0000   Max.   :   1.000   Max.   :  0.0000   Max.   :   0.000   Max.   :  1.000   Max.   :  96.0   Max.   :  0.000  
+    heading5          external           small       bulletedelement      indent2           big               cite           italicblod      includeonly     
+ Min.   :-3.0000   Min.   :-110.00   Min.   :-18.0   Min.   :-173.00   Min.   :-58.0   Min.   :-32.000   Min.   :-57.000   Min.   : -10.0   Min.   :-131.00  
+ 1st Qu.: 0.0000   1st Qu.: -31.00   1st Qu.:  0.0   1st Qu.:-114.00   1st Qu.: -0.5   1st Qu.:  0.000   1st Qu.:-10.500   1st Qu.:   0.0   1st Qu.:   0.00  
+ Median : 0.0000   Median : -14.00   Median :  0.0   Median : -55.00   Median :  0.0   Median :  0.000   Median : -1.000   Median :   0.0   Median :   0.00  
+ Mean   :-0.1143   Mean   : -19.86   Mean   : -0.6   Mean   : -65.86   Mean   : -3.6   Mean   : -1.571   Mean   : -7.457   Mean   : 132.9   Mean   : -10.11  
+ 3rd Qu.: 0.0000   3rd Qu.:  -1.50   3rd Qu.:  0.0   3rd Qu.: -29.00   3rd Qu.:  0.0   3rd Qu.:  0.000   3rd Qu.:  0.000   3rd Qu.:   0.0   3rd Qu.:   0.00  
+ Max.   : 0.0000   Max.   :   2.00   Max.   :  0.0   Max.   : 100.00   Max.   :  0.0   Max.   :  0.000   Max.   :  0.000   Max.   :4692.0   Max.   :   0.00  
+    indent1        content_size           date              revisions          pagename        
+ Min.   :-551.0   Min.   :-2477392   Min.   :2005-08-03   Min.   :-9.00000   Length:35         
+ 1st Qu.:-137.0   1st Qu.: -700664   1st Qu.:2006-09-16   1st Qu.: 0.00000   Class :character  
+ Median : -86.0   Median : -474224   Median :2008-02-21   Median : 0.00000   Mode  :character  
+ Mean   :-109.3   Mean   : -445531   Mean   :2008-03-07   Mean   :-0.05714                     
+ 3rd Qu.: -38.5   3rd Qu.:  -90472   3rd Qu.:2008-12-02   3rd Qu.: 0.00000                     
+ Max.   :   2.0   Max.   :  766240   Max.   :2015-03-02   Max.   :10.00000                     
+[1] "cluster 2"
+      none        sup          infobox          italic          heading3        heading4         sub           blockquote       heading2       reference  
+ Min.   :0   Min.   :0.00   Min.   :  0.0   Min.   :  0.00   Min.   : 0.00   Min.   :0.00   Min.   :  0.00   Min.   :  0.0   Min.   : 0.00   Min.   :  0  
+ 1st Qu.:0   1st Qu.:0.00   1st Qu.:  0.0   1st Qu.:  5.00   1st Qu.: 5.00   1st Qu.:0.00   1st Qu.:  0.00   1st Qu.:  0.0   1st Qu.: 5.00   1st Qu.:  1  
+ Median :0   Median :0.00   Median :  1.0   Median : 34.00   Median : 8.00   Median :0.00   Median :  0.00   Median :  0.0   Median :10.00   Median :  7  
+ Mean   :0   Mean   :0.64   Mean   :  6.2   Mean   : 41.04   Mean   : 9.24   Mean   :0.84   Mean   : 34.88   Mean   : 23.2   Mean   : 9.92   Mean   : 34  
+ 3rd Qu.:0   3rd Qu.:0.00   3rd Qu.:  1.0   3rd Qu.: 57.00   3rd Qu.:12.00   3rd Qu.:1.00   3rd Qu.:  0.00   3rd Qu.:  0.0   3rd Qu.:14.00   3rd Qu.: 25  
+ Max.   :0   Max.   :6.00   Max.   :118.0   Max.   :166.00   Max.   :28.00   Max.   :9.00   Max.   :420.00   Max.   :345.0   Max.   :36.00   Max.   :403  
+ numberedelement    wikitable          file        redirection     nowiki          blod          internal           s            heading5       external    
+ Min.   :  0.00   Min.   : 0.00   Min.   : 0.00   Min.   : 0   Min.   : 0.0   Min.   : 0.00   Min.   :  0.0   Min.   : 0.00   Min.   :0.00   Min.   : 0.00  
+ 1st Qu.:  1.00   1st Qu.: 0.00   1st Qu.: 0.00   1st Qu.: 0   1st Qu.: 0.0   1st Qu.: 2.00   1st Qu.:166.0   1st Qu.: 0.00   1st Qu.:0.00   1st Qu.: 3.00  
+ Median :  3.00   Median : 0.00   Median : 0.00   Median : 0   Median : 0.0   Median : 7.00   Median :265.0   Median : 0.00   Median :0.00   Median :15.00  
+ Mean   : 35.96   Mean   : 0.76   Mean   : 3.64   Mean   : 1   Mean   : 2.4   Mean   :11.32   Mean   :287.1   Mean   : 1.08   Mean   :0.04   Mean   :16.92  
+ 3rd Qu.: 32.00   3rd Qu.: 0.00   3rd Qu.: 2.00   3rd Qu.: 0   3rd Qu.: 0.0   3rd Qu.:14.00   3rd Qu.:396.0   3rd Qu.: 0.00   3rd Qu.:0.00   3rd Qu.:24.00  
+ Max.   :336.00   Max.   :10.00   Max.   :45.00   Max.   :14   Max.   :58.0   Max.   :88.00   Max.   :844.0   Max.   :13.00   Max.   :1.00   Max.   :57.00  
+     small      bulletedelement     indent2       big              cite          italicblod  includeonly      indent1       content_size          date           
+ Min.   :0.00   Min.   :  0.00   Min.   :0   Min.   :  0.00   Min.   :  0.00   Min.   :-1   Min.   : 0.0   Min.   :  0.0   Min.   :-816608   Min.   :2005-05-06  
+ 1st Qu.:0.00   1st Qu.: 33.00   1st Qu.:0   1st Qu.:  0.00   1st Qu.:  0.00   1st Qu.: 0   1st Qu.: 0.0   1st Qu.: 47.0   1st Qu.:     16   1st Qu.:2006-11-16  
+ Median :0.00   Median : 56.00   Median :0   Median :  0.00   Median :  3.00   Median : 0   Median : 0.0   Median : 97.0   Median : 382848   Median :2007-09-13  
+ Mean   :0.52   Mean   : 63.76   Mean   :0   Mean   : 18.96   Mean   : 13.48   Mean   : 1   Mean   : 6.2   Mean   :125.8   Mean   : 344995   Mean   :2008-11-14  
+ 3rd Qu.:0.00   3rd Qu.:104.00   3rd Qu.:0   3rd Qu.:  0.00   3rd Qu.: 15.00   3rd Qu.: 1   3rd Qu.: 0.0   3rd Qu.:161.0   3rd Qu.: 630272   3rd Qu.:2009-06-12  
+ Max.   :3.00   Max.   :153.00   Max.   :0   Max.   :239.00   Max.   :122.00   Max.   :11   Max.   :81.0   Max.   :603.0   Max.   :1115008   Max.   :2016-09-28  
+   revisions   pagename        
+ Min.   :0   Length:25         
+ 1st Qu.:0   Class :character  
+ Median :0   Mode  :character  
+ Mean   :0                     
+ 3rd Qu.:0                     
+ Max.   :0                     
+[1] "cluster 3"
+      none                sup              infobox              italic             heading3            heading4              sub               blockquote       
+ Min.   :-73.00000   Min.   :-9.00000   Min.   :-32.00000   Min.   :-57.00000   Min.   :-32.00000   Min.   :-67.00000   Min.   :-305.00000   Min.   :-169.0000  
+ 1st Qu.:  0.00000   1st Qu.: 0.00000   1st Qu.:  0.00000   1st Qu.:  0.00000   1st Qu.:  0.00000   1st Qu.:  0.00000   1st Qu.:   0.00000   1st Qu.:   0.0000  
+ Median :  0.00000   Median : 0.00000   Median :  0.00000   Median :  0.00000   Median :  0.00000   Median :  0.00000   Median :   0.00000   Median :   0.0000  
+ Mean   :  0.03702   Mean   : 0.01328   Mean   :  0.02042   Mean   :  0.02726   Mean   :  0.03964   Mean   :  0.02847   Mean   :   0.02746   Mean   :   0.0787  
+ 3rd Qu.:  0.00000   3rd Qu.: 0.00000   3rd Qu.:  0.00000   3rd Qu.:  0.00000   3rd Qu.:  0.00000   3rd Qu.:  0.00000   3rd Qu.:   0.00000   3rd Qu.:   0.0000  
+ Max.   :125.00000   Max.   :28.00000   Max.   : 31.00000   Max.   :110.00000   Max.   :104.00000   Max.   : 84.00000   Max.   :  90.00000   Max.   : 321.0000  
+    heading2           reference          numberedelement       wikitable              file            redirection            nowiki               blod          
+ Min.   :-19.00000   Min.   :-110.00000   Min.   :-41.00000   Min.   :-7.000000   Min.   :-27.00000   Min.   :-42.00000   Min.   :-3.000000   Min.   :-13.00000  
+ 1st Qu.:  0.00000   1st Qu.:   0.00000   1st Qu.:  0.00000   1st Qu.: 0.000000   1st Qu.:  0.00000   1st Qu.:  0.00000   1st Qu.: 0.000000   1st Qu.:  0.00000  
+ Median :  0.00000   Median :   0.00000   Median :  0.00000   Median : 0.000000   Median :  0.00000   Median :  0.00000   Median : 0.000000   Median :  0.00000  
+ Mean   :  0.02535   Mean   :   0.05533   Mean   :  0.01237   Mean   : 0.007143   Mean   :  0.00332   Mean   :  0.03481   Mean   : 0.007646   Mean   :  0.00755  
+ 3rd Qu.:  0.00000   3rd Qu.:   0.00000   3rd Qu.:  0.00000   3rd Qu.: 0.000000   3rd Qu.:  0.00000   3rd Qu.:  0.00000   3rd Qu.: 0.000000   3rd Qu.:  0.00000  
+ Max.   : 35.00000   Max.   : 149.00000   Max.   : 45.00000   Max.   :26.000000   Max.   : 32.00000   Max.   :128.00000   Max.   :31.000000   Max.   : 44.00000  
+    internal                s                 heading5            external             small           bulletedelement       indent2               big           
+ Min.   :-221.00000   Min.   :-19.000000   Min.   :-4.000000   Min.   :-21.00000   Min.   :-17.00000   Min.   :-53.0000   Min.   :-14.00000   Min.   :-80.00000  
+ 1st Qu.:   0.00000   1st Qu.:  0.000000   1st Qu.: 0.000000   1st Qu.:  0.00000   1st Qu.:  0.00000   1st Qu.:  0.0000   1st Qu.:  0.00000   1st Qu.:  0.00000  
+ Median :   0.00000   Median :  0.000000   Median : 0.000000   Median :  0.00000   Median :  0.00000   Median :  0.0000   Median :  0.00000   Median :  0.00000  
+ Mean   :   0.05825   Mean   :  0.003421   Mean   : 0.002918   Mean   :  0.02143   Mean   :  0.01258   Mean   :  0.1403   Mean   :  0.01026   Mean   :  0.02334  
+ 3rd Qu.:   0.00000   3rd Qu.:  0.000000   3rd Qu.: 0.000000   3rd Qu.:  0.00000   3rd Qu.:  0.00000   3rd Qu.:  0.0000   3rd Qu.:  0.00000   3rd Qu.:  0.00000  
+ Max.   : 307.00000   Max.   : 24.000000   Max.   :11.000000   Max.   : 30.00000   Max.   : 33.00000   Max.   :198.0000   Max.   : 33.00000   Max.   : 70.00000  
+      cite             italicblod         includeonly            indent1           content_size             date              revisions           pagename        
+ Min.   :-29.00000   Min.   :-81.00000   Min.   :-100.00000   Min.   :-116.0000   Min.   :-2101856.0   Min.   :2001-08-02   Min.   :-45.00000   Length:9940       
+ 1st Qu.:  0.00000   1st Qu.:  0.00000   1st Qu.:   0.00000   1st Qu.:   0.0000   1st Qu.:     -80.0   1st Qu.:2007-10-12   1st Qu.:  0.00000   Class :character  
+ Median :  0.00000   Median :  0.00000   Median :   0.00000   Median :   0.0000   Median :      96.0   Median :2010-03-12   Median :  0.00000   Mode  :character  
+ Mean   :  0.02485   Mean   :  0.08672   Mean   :   0.09245   Mean   :   0.0332   Mean   :     640.7   Mean   :2010-07-15   Mean   :  0.04044                     
+ 3rd Qu.:  0.00000   3rd Qu.:  0.00000   3rd Qu.:   0.00000   3rd Qu.:   0.0000   3rd Qu.:     752.0   3rd Qu.:2013-03-07   3rd Qu.:  0.00000                     
+ Max.   : 44.00000   Max.   :139.00000   Max.   : 176.00000   Max.   : 118.0000   Max.   : 1650832.0   Max.   :2016-12-22   Max.   : 65.00000                     
+> cboot$bootmean 
+[1] 0.5211087 0.4863306 0.9971507
+> cboot$bootbrd #veces disuelto
+[1] 42 42  0
+> cboot$bootrecover #veces recuperado
+[1]  44  43 100
+> kbest.p<-5#mas estables 12
+> cboot<-clusterboot(pmatrix, clustermethod=kmeansCBI,
++                    runs=100,iter.max=100,count = TRUE, 
++                    krange=kbest.p, seed=7777777,algorithm="MacQueen")
+boot 1 
+boot 2 
+boot 3 
+boot 4 
+boot 5 
+boot 6 
+boot 7 
+boot 8 
+boot 9 
+boot 10 
+boot 11 
+boot 12 
+boot 13 
+boot 14 
+boot 15 
+boot 16 
+boot 17 
+boot 18 
+boot 19 
+boot 20 
+boot 21 
+boot 22 
+boot 23 
+boot 24 
+boot 25 
+boot 26 
+boot 27 
+boot 28 
+boot 29 
+boot 30 
+boot 31 
+boot 32 
+boot 33 
+boot 34 
+boot 35 
+boot 36 
+boot 37 
+boot 38 
+boot 39 
+boot 40 
+boot 41 
+boot 42 
+boot 43 
+boot 44 
+boot 45 
+boot 46 
+boot 47 
+boot 48 
+boot 49 
+boot 50 
+boot 51 
+boot 52 
+boot 53 
+boot 54 
+boot 55 
+boot 56 
+boot 57 
+boot 58 
+boot 59 
+boot 60 
+boot 61 
+boot 62 
+boot 63 
+boot 64 
+boot 65 
+boot 66 
+boot 67 
+boot 68 
+boot 69 
+boot 70 
+boot 71 
+boot 72 
+boot 73 
+boot 74 
+boot 75 
+boot 76 
+boot 77 
+boot 78 
+boot 79 
+boot 80 
+boot 81 
+boot 82 
+boot 83 
+boot 84 
+boot 85 
+boot 86 
+boot 87 
+boot 88 
+boot 89 
+boot 90 
+boot 91 
+boot 92 
+boot 93 
+boot 94 
+boot 95 
+boot 96 
+boot 97 
+boot 98 
+boot 99 
+boot 100 
+> groups <- cboot$result$partition
+> #print_clusters(cboot$result$partition, kbest.p) Por si quiero ver el contenido
+> summary_clusters(cboot$result$partition, kbest.p)
+[1] "cluster 1"
+      none        sup       infobox      italic     heading3       heading4        sub      blockquote    heading2      reference numberedelement   wikitable
+ Min.   :0   Min.   :0   Min.   :0   Min.   :0   Min.   :-483   Min.   :-26   Min.   :0   Min.   :0    Min.   :-360   Min.   :0   Min.   :-236    Min.   :0  
+ 1st Qu.:0   1st Qu.:0   1st Qu.:0   1st Qu.:0   1st Qu.:-483   1st Qu.:-26   1st Qu.:0   1st Qu.:0    1st Qu.:-360   1st Qu.:0   1st Qu.:-236    1st Qu.:0  
+ Median :0   Median :0   Median :0   Median :0   Median :-483   Median :-26   Median :0   Median :0    Median :-360   Median :0   Median :-236    Median :0  
+ Mean   :0   Mean   :0   Mean   :0   Mean   :0   Mean   :-483   Mean   :-26   Mean   :0   Mean   :0    Mean   :-360   Mean   :0   Mean   :-236    Mean   :0  
+ 3rd Qu.:0   3rd Qu.:0   3rd Qu.:0   3rd Qu.:0   3rd Qu.:-483   3rd Qu.:-26   3rd Qu.:0   3rd Qu.:0    3rd Qu.:-360   3rd Qu.:0   3rd Qu.:-236    3rd Qu.:0  
+ Max.   :0   Max.   :0   Max.   :0   Max.   :0   Max.   :-483   Max.   :-26   Max.   :0   Max.   :0    Max.   :-360   Max.   :0   Max.   :-236    Max.   :0  
+      file    redirection     nowiki          blod      internal       s        heading5    external     small   bulletedelement    indent2       big         cite  
+ Min.   :1   Min.   :0    Min.   :-106   Min.   :0   Min.   :0   Min.   :0   Min.   :0   Min.   :0   Min.   :0   Min.   :-100    Min.   :0   Min.   :0   Min.   :0  
+ 1st Qu.:1   1st Qu.:0    1st Qu.:-106   1st Qu.:0   1st Qu.:0   1st Qu.:0   1st Qu.:0   1st Qu.:0   1st Qu.:0   1st Qu.:-100    1st Qu.:0   1st Qu.:0   1st Qu.:0  
+ Median :1   Median :0    Median :-106   Median :0   Median :0   Median :0   Median :0   Median :0   Median :0   Median :-100    Median :0   Median :0   Median :0  
+ Mean   :1   Mean   :0    Mean   :-106   Mean   :0   Mean   :0   Mean   :0   Mean   :0   Mean   :0   Mean   :0   Mean   :-100    Mean   :0   Mean   :0   Mean   :0  
+ 3rd Qu.:1   3rd Qu.:0    3rd Qu.:-106   3rd Qu.:0   3rd Qu.:0   3rd Qu.:0   3rd Qu.:0   3rd Qu.:0   3rd Qu.:0   3rd Qu.:-100    3rd Qu.:0   3rd Qu.:0   3rd Qu.:0  
+ Max.   :1   Max.   :0    Max.   :-106   Max.   :0   Max.   :0   Max.   :0   Max.   :0   Max.   :0   Max.   :0   Max.   :-100    Max.   :0   Max.   :0   Max.   :0  
+   italicblod  includeonly    indent1   content_size           date              revisions   pagename        
+ Min.   :-4   Min.   :0    Min.   :0   Min.   :-1513760   Min.   :2012-02-11   Min.   :0   Length:1          
+ 1st Qu.:-4   1st Qu.:0    1st Qu.:0   1st Qu.:-1513760   1st Qu.:2012-02-11   1st Qu.:0   Class :character  
+ Median :-4   Median :0    Median :0   Median :-1513760   Median :2012-02-11   Median :0   Mode  :character  
+ Mean   :-4   Mean   :0    Mean   :0   Mean   :-1513760   Mean   :2012-02-11   Mean   :0                     
+ 3rd Qu.:-4   3rd Qu.:0    3rd Qu.:0   3rd Qu.:-1513760   3rd Qu.:2012-02-11   3rd Qu.:0                     
+ Max.   :-4   Max.   :0    Max.   :0   Max.   :-1513760   Max.   :2012-02-11   Max.   :0                     
+[1] "cluster 2"
+      none               sup            infobox            italic          heading3         heading4         sub           blockquote        heading2    
+ Min.   :-1.00000   Min.   :0.0000   Min.   :  0.000   Min.   :  0.00   Min.   : 0.000   Min.   :0.00   Min.   :  0.00   Min.   :  0.00   Min.   : 0.00  
+ 1st Qu.: 0.00000   1st Qu.:0.0000   1st Qu.:  0.000   1st Qu.:  0.00   1st Qu.: 2.000   1st Qu.:0.00   1st Qu.:  0.00   1st Qu.:  0.00   1st Qu.: 4.00  
+ Median : 0.00000   Median :0.0000   Median :  1.000   Median : 28.50   Median : 7.000   Median :0.00   Median :  0.00   Median :  0.00   Median : 9.50  
+ Mean   :-0.03571   Mean   :0.6429   Mean   :  6.893   Mean   : 37.71   Mean   : 8.321   Mean   :0.75   Mean   : 31.14   Mean   : 24.68   Mean   :10.11  
+ 3rd Qu.: 0.00000   3rd Qu.:0.0000   3rd Qu.:  1.250   3rd Qu.: 48.75   3rd Qu.:12.000   3rd Qu.:1.00   3rd Qu.:  0.00   3rd Qu.:  0.00   3rd Qu.:14.00  
+ Max.   : 0.00000   Max.   :6.0000   Max.   :118.000   Max.   :166.00   Max.   :28.000   Max.   :9.00   Max.   :420.00   Max.   :345.00   Max.   :36.00  
+   reference      numberedelement    wikitable            file        redirection          nowiki            blod          internal            s          
+ Min.   :  0.00   Min.   :  0.00   Min.   : 0.0000   Min.   : 0.00   Min.   :  0.000   Min.   : 0.000   Min.   : 0.00   Min.   :  0.00   Min.   : 0.0000  
+ 1st Qu.:  0.75   1st Qu.:  0.00   1st Qu.: 0.0000   1st Qu.: 0.00   1st Qu.:  0.000   1st Qu.: 0.000   1st Qu.: 0.75   1st Qu.: 19.75   1st Qu.: 0.0000  
+ Median :  6.50   Median :  3.00   Median : 0.0000   Median : 0.00   Median :  0.000   Median : 0.000   Median : 6.00   Median :248.00   Median : 0.0000  
+ Mean   : 30.82   Mean   : 32.21   Mean   : 0.6786   Mean   : 3.25   Mean   :  7.571   Mean   : 2.143   Mean   :10.11   Mean   :256.36   Mean   : 0.9643  
+ 3rd Qu.: 24.25   3rd Qu.: 14.75   3rd Qu.: 0.0000   3rd Qu.: 0.50   3rd Qu.:  0.000   3rd Qu.: 0.000   3rd Qu.:13.25   3rd Qu.:390.00   3rd Qu.: 0.0000  
+ Max.   :403.00   Max.   :336.00   Max.   :10.0000   Max.   :45.00   Max.   :128.000   Max.   :58.000   Max.   :88.00   Max.   :844.00   Max.   :13.0000  
+    heading5          external         small        bulletedelement     indent2             big              cite          italicblod       includeonly    
+ Min.   :0.00000   Min.   : 0.00   Min.   :0.0000   Min.   :  0.00   Min.   : 0.0000   Min.   :  0.00   Min.   :  0.00   Min.   : -1.000   Min.   :  0.00  
+ 1st Qu.:0.00000   1st Qu.: 0.75   1st Qu.:0.0000   1st Qu.: 32.25   1st Qu.: 0.0000   1st Qu.:  0.00   1st Qu.:  0.00   1st Qu.:  0.000   1st Qu.:  0.00  
+ Median :0.00000   Median :12.50   Median :0.0000   Median : 53.00   Median : 0.0000   Median :  0.00   Median :  2.50   Median :  0.000   Median :  0.00  
+ Mean   :0.07143   Mean   :15.11   Mean   :0.4643   Mean   : 59.46   Mean   : 0.9286   Mean   : 18.54   Mean   : 12.39   Mean   :  5.286   Mean   : 11.07  
+ 3rd Qu.:0.00000   3rd Qu.:22.50   3rd Qu.:0.0000   3rd Qu.:100.25   3rd Qu.: 0.0000   3rd Qu.:  0.50   3rd Qu.: 12.00   3rd Qu.:  1.000   3rd Qu.:  0.00  
+ Max.   :1.00000   Max.   :57.00   Max.   :3.0000   Max.   :153.00   Max.   :26.0000   Max.   :239.00   Max.   :122.00   Max.   :120.000   Max.   :150.00  
+    indent1       content_size          date              revisions        pagename        
+ Min.   :  0.0   Min.   :-816608   Min.   :2005-05-06   Min.   :0.0000   Length:28         
+ 1st Qu.:  0.0   1st Qu.:     52   1st Qu.:2006-11-08   1st Qu.:0.0000   Class :character  
+ Median : 82.5   Median : 361720   Median :2007-09-25   Median :0.0000   Mode  :character  
+ Mean   :112.3   Mean   : 328940   Mean   :2009-01-28   Mean   :0.1786                     
+ 3rd Qu.:145.2   3rd Qu.: 610028   3rd Qu.:2010-10-12   3rd Qu.:0.0000                     
+ Max.   :603.0   Max.   :1115008   Max.   :2016-09-28   Max.   :5.0000                     
+[1] "cluster 3"
+      none               sup             infobox         italic           heading3          heading4           sub            blockquote         heading2      
+ Min.   :-11.0000   Min.   :-16.000   Min.   :-1.0   Min.   :-159.00   Min.   :-26.000   Min.   :-7.000   Min.   :-47.000   Min.   :-5.0000   Min.   :-637.00  
+ 1st Qu.:  0.0000   1st Qu.:  0.000   1st Qu.: 0.0   1st Qu.: -68.25   1st Qu.: -9.000   1st Qu.:-2.000   1st Qu.:  0.000   1st Qu.: 0.0000   1st Qu.: -11.00  
+ Median :  0.0000   Median :  0.000   Median : 0.0   Median : -31.50   Median : -5.000   Median : 0.000   Median :  0.000   Median : 0.0000   Median :  -9.00  
+ Mean   : -0.3667   Mean   : -1.467   Mean   :-0.2   Mean   : -44.70   Mean   : -6.933   Mean   :-1.233   Mean   : -1.567   Mean   :-0.3333   Mean   : -29.07  
+ 3rd Qu.:  0.0000   3rd Qu.:  0.000   3rd Qu.: 0.0   3rd Qu.:  -9.75   3rd Qu.: -3.000   3rd Qu.: 0.000   3rd Qu.:  0.000   3rd Qu.: 0.0000   3rd Qu.:  -6.00  
+ Max.   :  0.0000   Max.   :  0.000   Max.   : 0.0   Max.   :   1.00   Max.   :  0.000   Max.   : 1.000   Max.   :  0.000   Max.   : 0.0000   Max.   :   0.00  
+   reference      numberedelement   wikitable            file          redirection           nowiki          blod          internal            s        
+ Min.   :-59.00   Min.   :-40.0   Min.   :-2.0000   Min.   :-6.0000   Min.   :-1.00000   Min.   :-6.0   Min.   :-54.0   Min.   :-749.0   Min.   :-72.0  
+ 1st Qu.:-23.25   1st Qu.: -6.0   1st Qu.: 0.0000   1st Qu.: 0.0000   1st Qu.: 0.00000   1st Qu.: 0.0   1st Qu.: -5.0   1st Qu.:-393.0   1st Qu.:  0.0  
+ Median : -6.00   Median : -1.0   Median : 0.0000   Median : 0.0000   Median : 0.00000   Median : 0.0   Median : -3.0   Median :-287.0   Median :  0.0  
+ Mean   :-13.17   Mean   : -4.6   Mean   :-0.1667   Mean   :-0.2333   Mean   :-0.03333   Mean   :-0.3   Mean   : -7.9   Mean   :-282.9   Mean   : -2.4  
+ 3rd Qu.:  0.00   3rd Qu.:  0.0   3rd Qu.: 0.0000   3rd Qu.: 0.0000   3rd Qu.: 0.00000   3rd Qu.: 0.0   3rd Qu.: -1.0   3rd Qu.:-172.0   3rd Qu.:  0.0  
+ Max.   :  2.00   Max.   :  0.0   Max.   : 0.0000   Max.   : 0.0000   Max.   : 0.00000   Max.   : 0.0   Max.   :  1.0   Max.   :  96.0   Max.   :  0.0  
+    heading5          external           small       bulletedelement      indent2             big         cite           italicblod      includeonly    indent1       
+ Min.   :-3.0000   Min.   :-110.00   Min.   :-18.0   Min.   :-156.00   Min.   :-1.0000   Min.   :0   Min.   :-57.000   Min.   :  -5.0   Min.   :0    Min.   :-368.00  
+ 1st Qu.: 0.0000   1st Qu.: -32.50   1st Qu.:  0.0   1st Qu.:-109.00   1st Qu.: 0.0000   1st Qu.:0   1st Qu.:-11.000   1st Qu.:   0.0   1st Qu.:0    1st Qu.:-138.00  
+ Median : 0.0000   Median : -18.50   Median :  0.0   Median : -51.00   Median : 0.0000   Median :0   Median : -1.500   Median :   0.0   Median :0    Median : -96.50  
+ Mean   :-0.1333   Mean   : -23.83   Mean   : -0.7   Mean   : -59.97   Mean   :-0.1667   Mean   :0   Mean   : -8.233   Mean   : 156.2   Mean   :0    Mean   :-111.50  
+ 3rd Qu.: 0.0000   3rd Qu.:  -7.50   3rd Qu.:  0.0   3rd Qu.: -29.25   3rd Qu.: 0.0000   3rd Qu.:0   3rd Qu.:  0.000   3rd Qu.:   0.0   3rd Qu.:0    3rd Qu.: -66.75  
+ Max.   : 0.0000   Max.   :   2.00   Max.   :  0.0   Max.   : 100.00   Max.   : 0.0000   Max.   :0   Max.   :  0.000   Max.   :4692.0   Max.   :0    Max.   :   2.00  
+  content_size           date              revisions         pagename        
+ Min.   :-2477392   Min.   :2005-08-03   Min.   :-9.0000   Length:30         
+ 1st Qu.: -658724   1st Qu.:2006-06-14   1st Qu.: 0.0000   Class :character  
+ Median : -447056   Median :2007-02-24   Median : 0.0000   Mode  :character  
+ Mean   : -379717   Mean   :2007-10-25   Mean   :-0.4667                     
+ 3rd Qu.:  -71916   3rd Qu.:2008-08-03   3rd Qu.: 0.0000                     
+ Max.   :  766240   Max.   :2015-03-02   Max.   : 3.0000                     
+[1] "cluster 4"
+      none                sup              infobox             italic             heading3            heading4              sub               blockquote       
+ Min.   :-73.00000   Min.   :-9.00000   Min.   :-32.0000   Min.   :-57.00000   Min.   :-67.00000   Min.   :-67.00000   Min.   :-305.00000   Min.   :-169.0000  
+ 1st Qu.:  0.00000   1st Qu.: 0.00000   1st Qu.:  0.0000   1st Qu.:  0.00000   1st Qu.:  0.00000   1st Qu.:  0.00000   1st Qu.:   0.00000   1st Qu.:   0.0000  
+ Median :  0.00000   Median : 0.00000   Median :  0.0000   Median :  0.00000   Median :  0.00000   Median :  0.00000   Median :   0.00000   Median :   0.0000  
+ Mean   :  0.03693   Mean   : 0.01308   Mean   :  0.0166   Mean   :  0.02657   Mean   :  0.03271   Mean   :  0.02838   Mean   :   0.02747   Mean   :   0.0675  
+ 3rd Qu.:  0.00000   3rd Qu.: 0.00000   3rd Qu.:  0.0000   3rd Qu.:  0.00000   3rd Qu.:  0.00000   3rd Qu.:  0.00000   3rd Qu.:   0.00000   3rd Qu.:   0.0000  
+ Max.   :125.00000   Max.   :28.00000   Max.   : 22.0000   Max.   :110.00000   Max.   :104.00000   Max.   : 84.00000   Max.   :  90.00000   Max.   : 321.0000  
+    heading2           reference          numberedelement       wikitable              file            redirection           nowiki                blod          
+ Min.   :-19.00000   Min.   :-110.00000   Min.   :-41.00000   Min.   :-7.000000   Min.   :-27.00000   Min.   :-42.0000   Min.   :-20.000000   Min.   :-13.00000  
+ 1st Qu.:  0.00000   1st Qu.:   0.00000   1st Qu.:  0.00000   1st Qu.: 0.000000   1st Qu.:  0.00000   1st Qu.:  0.0000   1st Qu.:  0.000000   1st Qu.:  0.00000  
+ Median :  0.00000   Median :   0.00000   Median :  0.00000   Median : 0.000000   Median :  0.00000   Median :  0.0000   Median :  0.000000   Median :  0.00000  
+ Mean   :  0.02073   Mean   :   0.05002   Mean   :  0.01198   Mean   : 0.007145   Mean   :  0.00332   Mean   :  0.0159   Mean   :  0.005636   Mean   :  0.00765  
+ 3rd Qu.:  0.00000   3rd Qu.:   0.00000   3rd Qu.:  0.00000   3rd Qu.: 0.000000   3rd Qu.:  0.00000   3rd Qu.:  0.0000   3rd Qu.:  0.000000   3rd Qu.:  0.00000  
+ Max.   : 35.00000   Max.   : 149.00000   Max.   : 45.00000   Max.   :26.000000   Max.   : 32.00000   Max.   : 54.0000   Max.   : 31.000000   Max.   : 44.00000  
+    internal                s                 heading5            external             small           bulletedelement        indent2               big           
+ Min.   :-221.00000   Min.   :-19.000000   Min.   :-4.000000   Min.   :-21.00000   Min.   :-17.00000   Min.   :-100.0000   Min.   :-14.00000   Min.   :-80.00000  
+ 1st Qu.:   0.00000   1st Qu.:  0.000000   1st Qu.: 0.000000   1st Qu.:  0.00000   1st Qu.:  0.00000   1st Qu.:   0.0000   1st Qu.:  0.00000   1st Qu.:  0.00000  
+ Median :   0.00000   Median :  0.000000   Median : 0.000000   Median :  0.00000   Median :  0.00000   Median :   0.0000   Median :  0.00000   Median :  0.00000  
+ Mean   :   0.07095   Mean   :  0.003422   Mean   : 0.002818   Mean   :  0.02345   Mean   :  0.01258   Mean   :   0.1276   Mean   :  0.00765   Mean   :  0.01882  
+ 3rd Qu.:   0.00000   3rd Qu.:  0.000000   3rd Qu.: 0.000000   3rd Qu.:  0.00000   3rd Qu.:  0.00000   3rd Qu.:   0.0000   3rd Qu.:  0.00000   3rd Qu.:  0.00000  
+ Max.   : 307.00000   Max.   : 24.000000   Max.   :11.000000   Max.   : 30.00000   Max.   : 33.00000   Max.   : 198.0000   Max.   : 33.00000   Max.   : 70.00000  
+      cite             italicblod         includeonly            indent1            content_size             date              revisions           pagename        
+ Min.   :-29.00000   Min.   :-81.00000   Min.   :-100.00000   Min.   :-116.00000   Min.   :-2101856.0   Min.   :2001-08-02   Min.   :-45.00000   Length:9937       
+ 1st Qu.:  0.00000   1st Qu.:  0.00000   1st Qu.:   0.00000   1st Qu.:   0.00000   1st Qu.:     -80.0   1st Qu.:2007-10-12   1st Qu.:  0.00000   Class :character  
+ Median :  0.00000   Median :  0.00000   Median :   0.00000   Median :   0.00000   Median :      96.0   Median :2010-03-13   Median :  0.00000   Mode  :character  
+ Mean   :  0.02284   Mean   :  0.07387   Mean   :   0.07688   Mean   :   0.04035   Mean   :     563.9   Mean   :2010-07-15   Mean   :  0.04106                     
+ 3rd Qu.:  0.00000   3rd Qu.:  0.00000   3rd Qu.:   0.00000   3rd Qu.:   0.00000   3rd Qu.:     752.0   3rd Qu.:2013-03-07   3rd Qu.:  0.00000                     
+ Max.   : 44.00000   Max.   :139.00000   Max.   : 176.00000   Max.   : 118.00000   Max.   : 1650832.0   Max.   :2016-12-22   Max.   : 65.00000                     
+[1] "cluster 5"
+      none            sup         infobox           italic     heading3        heading4      sub         blockquote        heading2        reference numberedelement
+ Min.   :-70.0   Min.   :-20   Min.   :-18.00   Min.   :0   Min.   :-5.00   Min.   :0   Min.   :-2.0   Min.   :-208.0   Min.   :-61.00   Min.   :0   Min.   :-1.00  
+ 1st Qu.:-17.5   1st Qu.: -5   1st Qu.: -8.25   1st Qu.:0   1st Qu.:-1.25   1st Qu.:0   1st Qu.:-0.5   1st Qu.:-203.5   1st Qu.:-41.50   1st Qu.:0   1st Qu.:-0.25  
+ Median :  0.0   Median :  0   Median : -4.50   Median :0   Median : 0.00   Median :0   Median : 0.0   Median :-195.5   Median :-33.00   Median :0   Median : 0.00  
+ Mean   :-17.5   Mean   : -5   Mean   : -6.75   Mean   :0   Mean   :-1.25   Mean   :0   Mean   :-0.5   Mean   :-149.8   Mean   :-31.75   Mean   :0   Mean   :-0.25  
+ 3rd Qu.:  0.0   3rd Qu.:  0   3rd Qu.: -3.00   3rd Qu.:0   3rd Qu.: 0.00   3rd Qu.:0   3rd Qu.: 0.0   3rd Qu.:-141.8   3rd Qu.:-23.25   3rd Qu.:0   3rd Qu.: 0.00  
+ Max.   :  0.0   Max.   :  0   Max.   :  0.00   Max.   :0   Max.   : 0.00   Max.   :0   Max.   : 0.0   Max.   :   0.0   Max.   :  0.00   Max.   :0   Max.   : 0.00  
+   wikitable       file          redirection      nowiki          blod      internal       s             heading5    external     small   bulletedelement 
+ Min.   :-8   Min.   :-173.00   Min.   :-16   Min.   :-2.0   Min.   :0   Min.   :0   Min.   :-14.00   Min.   :0   Min.   :0   Min.   :0   Min.   :-173.0  
+ 1st Qu.:-2   1st Qu.: -43.25   1st Qu.: -4   1st Qu.:-0.5   1st Qu.:0   1st Qu.:0   1st Qu.:-11.00   1st Qu.:0   1st Qu.:0   1st Qu.:0   1st Qu.:-158.0  
+ Median : 0   Median :   0.00   Median :  0   Median : 0.0   Median :0   Median :0   Median : -7.50   Median :0   Median :0   Median :0   Median : -83.5  
+ Mean   :-2   Mean   : -43.25   Mean   : -4   Mean   :-0.5   Mean   :0   Mean   :0   Mean   : -7.25   Mean   :0   Mean   :0   Mean   :0   Mean   : -87.5  
+ 3rd Qu.: 0   3rd Qu.:   0.00   3rd Qu.:  0   3rd Qu.: 0.0   3rd Qu.:0   3rd Qu.:0   3rd Qu.: -3.75   3rd Qu.:0   3rd Qu.:0   3rd Qu.:0   3rd Qu.: -13.0  
+ Max.   : 0   Max.   :   0.00   Max.   :  0   Max.   : 0.0   Max.   :0   Max.   :0   Max.   :  0.00   Max.   :0   Max.   :0   Max.   :0   Max.   : -10.0  
+    indent2            big              cite      italicblod      includeonly         indent1        content_size          date              revisions    
+ Min.   :-58.00   Min.   :-32.00   Min.   :-4   Min.   :-10.00   Min.   :-131.00   Min.   :-551.0   Min.   :-788672   Min.   :2006-10-16   Min.   :-1.00  
+ 1st Qu.:-40.75   1st Qu.:-23.00   1st Qu.:-1   1st Qu.: -8.50   1st Qu.:-118.25   1st Qu.:-137.8   1st Qu.:-720704   1st Qu.:2007-10-20   1st Qu.:-0.25  
+ Median :-24.50   Median :-11.50   Median : 0   Median : -7.50   Median :-111.50   Median :   0.0   Median :-628944   Median :2008-06-22   Median : 0.00  
+ Mean   :-30.25   Mean   :-13.75   Mean   :-1   Mean   : -6.25   Mean   : -88.50   Mean   :-137.8   Mean   :-627224   Mean   :2008-03-24   Mean   : 0.25  
+ 3rd Qu.:-14.00   3rd Qu.: -2.25   3rd Qu.: 0   3rd Qu.: -5.25   3rd Qu.: -81.75   3rd Qu.:   0.0   3rd Qu.:-535464   3rd Qu.:2008-11-25   3rd Qu.: 0.50  
+ Max.   :-14.00   Max.   :  0.00   Max.   : 0   Max.   :  0.00   Max.   :   0.00   Max.   :   0.0   Max.   :-462336   Max.   :2009-03-07   Max.   : 2.00  
+   pagename        
+ Length:4          
+ Class :character  
+ Mode  :character  
+                   
+                   
+                   
+> cboot$bootmean 
+[1] 0.4781667 0.6963367 0.7842994 0.9977783 0.2541645
+> cboot$bootbrd #veces disuelto
+[1] 71 16  6  0 88
+> cboot$bootrecover #veces recuperado
+[1]  29  38  69 100   3
