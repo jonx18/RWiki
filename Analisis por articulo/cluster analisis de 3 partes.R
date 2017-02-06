@@ -4,7 +4,7 @@ library(reshape2)
 library(cluster)
 
 #data<-df.articulos.evol[[33]]#arranco con el total de los datos
-data<-df.pages#arranco con el total de los datos
+data<-df.big#arranco con el total de los datos
 #data<-df.pages.partes[,-partes]#arranco con el total de los datos
 set.seed(7777777) #semilla para repeticion
 
@@ -56,13 +56,13 @@ pscale <- attr(pmatrix, "scaled:scale")
 #Calculando cuantos K clusters usar
 #Usando el criterio de indice de Calinski-Harabasz.
 #(Promedio entre la varianza de clusters entre si y y el total de la varianza interna de los clusters.) )
-clustering.ch <- kmeansruns(pmatrix, krange=1:20, criterion="ch")
+clustering.ch <- kmeansruns(pmatrix, krange=1:15, criterion="ch")
 clustering.ch$bestk #K recomendado por CH
 #Usando el criterio de "Average silhouette width" (tarda mucho)
-clustering.asw <- kmeansruns(pmatrix, krange=1:20, criterion="asw")#Criterio asw(average silhouette width)
+clustering.asw <- kmeansruns(pmatrix, krange=1:15, criterion="asw")#Criterio asw(average silhouette width)
 clustering.asw$bestk #K recomendado por ASW
 #Grafico para observar posibles K
-critframe <- data.frame(k=1:20, ch=scale(clustering.ch$crit),
+critframe <- data.frame(k=1:15, ch=scale(clustering.ch$crit),
                         asw=scale(clustering.asw$crit))
 critframe <- melt(critframe, id.vars=c("k"),
                   variable.name="measure",
@@ -70,7 +70,7 @@ critframe <- melt(critframe, id.vars=c("k"),
 
 ggplot(critframe, aes(x=k, y=score, color=measure)) +
   geom_point(aes(shape=measure)) + geom_line(aes(linetype=measure)) +
-  scale_x_continuous(breaks=1:20, labels=1:20)
+  scale_x_continuous(breaks=1:15, labels=1:15)
 
 #K seleccionados para probar.  2,4,5,10,13,14,15,18
 #cboot$bootmean<0.6 es inestable
@@ -82,7 +82,7 @@ ggplot(critframe, aes(x=k, y=score, color=measure)) +
 
 
 
-kbest.p<-5#mas estables 5
+kbest.p<-12#mas estables 5
 print(kbest.p)
 cboot<-clusterboot(pmatrix, clustermethod=kmeansCBI,
                    runs=100,iter.max=100,count = TRUE, 
