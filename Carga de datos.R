@@ -1,9 +1,12 @@
 #generacion dinamica de dataframes
 #Obtengo json files en un directorio
+install.packages(pbapply)
+install.packages(data.table)
+install.packages(jsonlite)
 library(pbapply)
 library(data.table)
-library("jsonlite")#Cargo libreria de JSON
-directorio <-"C:\\Users\\Jonx\\Downloads\\WikiAnalisis\\exports full\\"
+library(jsonlite)#Cargo libreria de JSON
+directorio <-"C:\\exports\\"# Indique donde estan los archivos del export
 files <- list.files(path = directorio ,pattern="*.txt")
 files <- pblapply(files, function(x) paste(directorio,x,sep=""))
 jsonfile <- pblapply(files, readLines)

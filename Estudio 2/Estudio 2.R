@@ -1,3 +1,6 @@
+install.packages(fpc)
+install.packages(ggplot2)
+install.packages(reshape2)
 library(fpc)
 library(ggplot2)
 library(reshape2)

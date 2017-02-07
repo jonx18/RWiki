@@ -1,4 +1,6 @@
-library("arules")
+install.packages(arules)
+install.packages(arulesViz)
+library(arules)
 library(arulesViz)
 
 #Generacion de transacciones
